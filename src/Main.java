@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Main {
     private static final Set<String> STOP_WORDS = new HashSet<>(Arrays.asList(
@@ -28,8 +29,12 @@ public class Main {
             "not", "very", "just", "too", "also",
             "all", "some", "many", "most", "much", "few", "each", "every", "any", "either", "neither"
     ));
+    private static final Pattern nonAlphaPattern = Pattern.compile("^[^a-zA-Z]+|[^a-zA-Z]+$"); // Remove trailing non-alphabetic
+    private static final Pattern possessivePattern = Pattern.compile("'s$"); // Remove possessive 's
 
     public static void main(String[] args) {
+
+        long startTime = System.nanoTime();
 
         String textFileUrl = "https://courses.cs.washington.edu/courses/cse390c/22sp/lectures/moby.txt";
         Map<String, Integer> wordsCount = new HashMap<>();
@@ -46,9 +51,10 @@ public class Main {
                 for (String word : words) {
 
                     //Replace double quote & single quote
-                    word = word.replaceAll("^[^a-zA-Z]+|[^a-zA-Z]+$", "");
+                    word = nonAlphaPattern.matcher(word).replaceAll("");
+                    word = possessivePattern.matcher(word).replaceAll("");
 
-                    word = word.replaceAll("'s$", "").toLowerCase();
+                    word = word.toLowerCase();
 
                     if (!word.isEmpty() && !STOP_WORDS.contains(word)  && !word.matches("\\d+")) {
                         wordsCount.put(word, wordsCount.getOrDefault(word, 0)+1);
@@ -62,8 +68,7 @@ public class Main {
             System.err.println("Error reading from URL: " + e.getMessage());
         }
 
-        System.out.println(wordsCount.toString());
-        System.out.println("Total words" + totalWords);
+        System.out.println("Total words: " + totalWords);
 
         System.out.println("\nTop 5 most frequent words:");
         wordsCount.entrySet().stream()
@@ -77,6 +82,15 @@ public class Main {
                 .sorted()
                 .limit(50)
                 .forEach(System.out::println);
+
+        // End time after execution
+        long endTime = System.nanoTime();
+
+        // Calculate and print elapsed time
+        long duration = endTime - startTime;
+
+        // Optionally, convert to milliseconds if you want more readable output
+        System.out.println("Execution time: " + duration / 1_000_000 + " milliseconds");
     }
 
 }
