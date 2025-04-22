@@ -82,58 +82,30 @@ public class Main {
             System.err.println("Error reading from URL: " + e.getMessage());
         }
 
-        // Print the total word count (after filtering)
+        // Print the Output
         System.out.println("Total word count (excluding the filtered words): " + totalWords);
 
-        // Runnable task for top 5 frequent words
-        Runnable topFrequentWordsTask = new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("\nTop 5 most frequent words with counts (excluding the filtered words):");
-                wordsCount.entrySet().stream()
-                        .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                        .limit(5)
-                        .forEach(e -> System.out.println(e.getKey() + " -> " + e.getValue()));
-            }
-        };
+        System.out.println("\nTop 5 most frequent words with counts (excluding the filtered words):");
+        wordsCount.entrySet().stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .limit(5)
+                .forEach(e -> System.out.println(e.getKey() + " -> " + e.getValue()));
 
-        // Runnable task for top 50 alphabetical words
-        Runnable topAlphabeticalWordsTask = new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("\nTop 50 alphabetically sorted list of all unique words (excluding the filtered words):");
-                wordsCount.keySet().stream()
-                        .sorted()
-                        .limit(50)
-                        .forEach(System.out::println);
-            }
-        };
-
-        // Create threads for each task
-        Thread thread1 = new Thread(topFrequentWordsTask);
-        Thread thread2 = new Thread(topAlphabeticalWordsTask);
-
-        // Start both threads
-        thread1.start();
-        thread2.start();
-
-        // Wait for both threads to finish before calculating execution time
-        try {
-            thread1.join();
-            thread2.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        System.out.println("\nTop 50 alphabetically sorted list of all unique words (excluding the filtered words):");
+        wordsCount.keySet().stream()
+                .sorted()
+                .limit(50)
+                .forEach(System.out::println);
 
 
         // End time after execution
         long endTime = System.nanoTime();
 
         // Calculate and print elapsed time
-        long duration = endTime - startTime;
+        double duration = (double) (endTime - startTime) /1_000_000_000;
 
         // Optionally, convert to milliseconds if you want more readable output
-        System.out.println("\nExecution time:" + String.format("%.3f", (double)duration / 1_000_000_000) + " seconds");
+        System.out.println("\nExecution time:" + String.format("%.3f", duration ) + " seconds");
     }
 
 }
