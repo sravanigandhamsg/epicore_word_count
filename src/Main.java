@@ -13,7 +13,17 @@ public class Main {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                String[] words = line.split("[\\s,\\.]+");
+
+                for (String word : words) {
+
+                    //Replace double quote & single quote
+                    word = word.replaceAll("^[\"']+|[\"']+$", "");
+
+                    if (!word.isEmpty()) {
+                        System.out.println(word);
+                    }
+                }
             }
 
             reader.close();
